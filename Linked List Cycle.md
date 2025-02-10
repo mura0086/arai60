@@ -67,6 +67,34 @@ class Solution
 };
 ```
 
+ここで一つ前までのコードが値を保持、検索してしまっていることに気が付き以下の通りポインタをsetの型に指定する修正をした。
+このような誤りはなくしたい。
+
+class Solution 
+{
+    public:
+        bool hasCycle (ListNode *head) 
+        {
+            if (head == nullptr)
+            {
+                return false;
+            }            
+            set<ListNode *> visited;
+            ListNode *current_node = head;
+            while (current_node -> next != nullptr)
+            {
+                auto detected_node = visited.find (current_node);
+                if (detected_node != visited.end ())
+                {
+                    return true;
+                }
+                visited.insert (current_node);
+                current_node = current_node -> next;
+            }
+            return false;
+        }
+};
+
 STEP3
 ほかのコードを見てフロイドの循環検出を知り、実装してみた。
 1つずつ進むslowと2つずつ進むfastという異なる速度で進む2つのポインタを用意。
