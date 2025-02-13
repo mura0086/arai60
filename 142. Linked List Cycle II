@@ -1,0 +1,87 @@
+STEP1
+
+Linked List Cycleとの違いは見つかった地点のポインタを返す、というところ。
+訪れたノードをsetに記録していき、見つかった時点でポインタを返した。
+
+```cpp
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution 
+{
+	public:
+	    ListNode *detectCycle(ListNode *head) 
+	    {   
+	        ListNode *node = head;
+	        set<ListNode *> visited;
+	        while (node != nullptr)
+	        {
+	            if (visited.find(node) != visited.end())
+	            {
+	                return node;
+	            }
+	            visited.insert(node);
+	            node = node->next;
+	        }
+	        return  nullptr;
+	    }
+};
+```
+
+STEP2
+フロイドの循環検出を実装した。
+検出場所を探すための手法についてはほかのコードを参考にした。
+サイクルが存在する場合、サイクルの開始地点をcとすると
+その時点でslowはスタート位置からc、fastはスタート位置から2c,サイクルの開始地点からc進んでいる。
+サイクルの長さをLとすると、fastはL-c回移動するとslowに追いつき
+slowはサイクルの開始地点からL-c移動している。
+ここでfastをスタート地点に移動させ１つずつポインタを進めるとslowとfastがサイクルの開始地点で重なることになる。
+（L-c+c=L=0）
+
+```cpp
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution 
+{
+    private:
+        ListNode *cycleStart(ListNode *fast, ListNode *slow)
+        {
+            while (true)
+            {
+                if (fast == slow)
+                {
+                    return fast;
+                }
+                fast = fast->next;
+                slow = slow->next;
+            }
+        }
+    public:
+        ListNode *detectCycle(ListNode *head) 
+        {    
+            ListNode *fast = head;
+            ListNode *slow = head;
+            while (fast != nullptr && fast->next != nullptr)
+            {
+                fast = fast->next->next;
+                slow = slow->next;
+                if (fast == slow)
+                {
+                    return cycleStart(head, slow);
+                }
+            }
+        return nullptr;
+        }
+};
+```
