@@ -17,16 +17,16 @@ class Solution
 	public:
 	    ListNode *detectCycle(ListNode *head) 
 	    {   
-	        ListNode *current_node = head;
+	        ListNode *node = head;
 	        set<ListNode *> visited;
-	        while (current_node != nullptr)
+	        while (node != nullptr)
 	        {
-	            if (visited.find(current_node) != visited.end())
+	            if (visited.find(node) != visited.end())
 	            {
-	                return current_node;
+	                return node;
 	            }
-	            visited.insert(current_node);
-	            current_node = current_node->next;
+	            visited.insert(node);
+	            node = node->next;
 	        }
 	        return  nullptr;
 	    }
@@ -44,32 +44,44 @@ slowはサイクルの開始地点からL-c移動している。
 （L-c+c=L=0）
 
 ```cpp
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution 
 {
-	public:
-	    ListNode *detectCycle(ListNode *head) 
-	    {   
-	       ListNode *fast = head;
-	       ListNode *slow = head;
-	       while (fast != nullptr && fast->next != nullptr)
-	       {
-	            fast = fast->next->next;
-	            slow = slow->next;
-	            if (fast == slow)
-	            {
-	                fast = head;
-	                while (true)
-	                {
-	                    if (fast == slow)
-	                    {
-	                        return fast;
-	                    }
-	                    fast = fast->next;
-	                    slow = slow->next;
-	                }
-	            }
-	       }
-	        return nullptr;
-	    }
+    private:
+        ListNode *cycleStart(ListNode *fast, ListNode *slow)
+        {
+            while (true)
+            {
+                if (fast == slow)
+                {
+                    return fast;
+                }
+                fast = fast->next;
+                slow = slow->next;
+            }
+        }
+    public:
+        ListNode *detectCycle(ListNode *head) 
+        {    
+            ListNode *fast = head;
+            ListNode *slow = head;
+            while (fast != nullptr && fast->next != nullptr)
+            {
+                fast = fast->next->next;
+                slow = slow->next;
+                if (fast == slow)
+                {
+                    return cycleStart(head, slow);
+                }
+            }
+        return nullptr;
+        }
 };
 ```
